@@ -33,7 +33,7 @@ def sendemail(from_addr, to_addr_list,
 
     msg['Subject'] = subject
     # Send the email via our own SMTP server.
-    smtpserver = smtplib.SMTP("smtp.qq.com", 587)
+    smtpserver = smtplib.SMTP("smtp.gmail.com", 587)
     smtpserver.starttls()
     # login
     smtpserver.login(login, password)
@@ -41,12 +41,12 @@ def sendemail(from_addr, to_addr_list,
     smtpserver.quit()
     return problems
 
-sendemail(from_addr='648467389@qq.com',
-          to_addr_list=['zeeutao@163.com'],
-          subject='Test',
-          content='test content hahahaha',
-          login='648467389@qq.com',
-          password="eozqcfppquskbcij",filelist=['test.png'])
+sendemail(from_addr='xxx@gmail.com',
+          to_addr_list=['xxx@gmail.com'],
+          subject='test',
+          content='test content',
+          login='xxxx@gmail.com',
+          password="yourpassword",filelist=['filename'])
 
 
 
