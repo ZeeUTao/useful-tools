@@ -20,7 +20,7 @@ def sendemail(from_addr, to_addr_list,
     # sender
     msg['From'] = from_addr
     # receiver
-    msg['To'] = to_addr_list[0]
+    msg['To'] = to_addr_list
 
     # attachment
     for onefile in filelist:
@@ -41,6 +41,7 @@ def sendemail(from_addr, to_addr_list,
     smtpserver.quit()
     return problems
 
+  # an example
 sendemail(from_addr='xxx@gmail.com',
           to_addr_list=['xxx@gmail.com'],
           subject='test',
