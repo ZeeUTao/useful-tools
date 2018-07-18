@@ -42,7 +42,7 @@ def sendemail(from_addr, to_addr_list,
     return problems
 
 sendemail(from_addr='xxx@gmail.com',
-          to_addr_list=['xxxx@gmail.com'],
+          to_addr_list='xxxx@gmail.com',
           subject='Test',
           content='test content',
           login='xxx@gmail.com',
