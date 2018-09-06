@@ -100,3 +100,25 @@ def sum_allpoints(list):
 # print('con_factor=',con_factor)
 #fitting_fig(True)
 W_fig(True)
+
+
+
+
+
+
+
+
+
+
+
+# import time to name the file
+import datetime
+nowTime=datetime.datetime.now().strftime('%Y%m%d %H%M%S') #现在时间
+
+
+'''Print on the txt '''
+# create a new file with nowtime or delete 'nowtime' and open an existed file
+filename = 'filefold/ex/ex' + nowTime + '.txt'
+
+file1 = open(filename, 'w')
+print('wordswords', file = file1)
