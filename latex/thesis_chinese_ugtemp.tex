@@ -1,0 +1,100 @@
+\documentclass[UTF8,12pt,a4paper]{report}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{ctex}
+\usepackage[center]{titlesec}
+\usepackage{amsmath} % AMS Math Package
+\usepackage{amsthm} % Theorem Formatting
+\usepackage{amssymb}	% Math symbols such as \mathbb
+\usepackage{multicol} % Allows for multiple columns
+\usepackage{cite}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage[font=small,labelfont=bf]{caption}
+%\usepackage{CJKutf8}
+% Sets margins and page size
+\makeatletter % Need for anything that contains an @ command 
+\newcommand{\myfontaa}{\fontsize{16pt}{\baselineskip}\selectfont} % 小二号
+\newcommand{\myfonta}{\fontsize{16pt}{\baselineskip}\selectfont} % 三号
+\newcommand{\myfontb}{\fontsize{14pt}{\baselineskip}\selectfont} %四号
+\newcommand{\myfontc}{\fontsize{12pt}{\baselineskip}\selectfont}%小四
+\newcommand{\myfontd}{\fontsize{10.5pt}{\baselineskip}\selectfont}%五号
+
+\renewcommand\bibname{参考文献}
+\renewcommand{\figurename}{图}
+\renewcommand{\contentsname}{\myfontaa \heiti目\quad 录}
+\renewcommand{\maketitle} % Redefine maketitle to conserve space
+{ \begingroup  \begin{center} \large {\bf \@title}
+		\vskip 10pt \large \@author \hskip 20pt \@date \end{center}
+	\vskip 10pt \endgroup \setcounter{footnote}{0} }
+\makeatother % End of region containing @ commands
+\renewcommand{\labelenumi}{(\alph{enumi})} % Use letters for enumerate
+% \DeclareMathOperator{\Sample}{Sample}
+\let\vaccent=\v % rename builtin command \v{} to \vaccent{}
+\renewcommand{\v}[1]{\ensuremath{\mathbf{#1}}} % for vectors
+\newcommand{\gv}[1]{\ensuremath{\mbox{\boldmath$ #1 $}}} 
+% for vectors of Greek letters
+\newcommand{\uv}[1]{\ensuremath{\mathbf{\hat{#1}}}} % for unit vector
+\newcommand{\abs}[1]{\left| #1 \right|} % for absolute value
+\newcommand{\avg}[1]{\left< #1 \right>} % for average
+\let\underdot=\d % rename builtin command \d{} to \underdot{}
+\renewcommand{\d}[2]{\frac{d #1}{d #2}} % for derivatives
+\newcommand{\dd}[2]{\frac{d^2 #1}{d #2^2}} % for double derivatives
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} 
+% for partial derivatives
+\newcommand{\pdd}[2]{\frac{\partial^2 #1}{\partial #2^2}} 
+% for double partial derivatives
+\newcommand{\pdc}[3]{\left( \frac{\partial #1}{\partial #2}
+	\right)_{#3}} % for thermodynamic partial derivatives
+\newcommand{\ket}[1]{\left| #1 \right>} % for Dirac bras
+\newcommand{\bra}[1]{\left< #1 \right|} % for Dirac kets
+\newcommand{\braket}[2]{\left< #1 \vphantom{#2} \right|
+	\left. #2 \vphantom{#1} \right>} % for Dirac brackets
+\newcommand{\matrixel}[3]{\left< #1 \vphantom{#2#3} \right|
+	#2 \left| #3 \vphantom{#1#2} \right>} % for Dirac matrix elements
+\newcommand{\grad}[1]{\gv{\nabla} #1} % for gradient
+\let\divsymb=\div % rename builtin command \div to \divsymb
+\renewcommand{\div}[1]{\gv{\nabla} \cdot #1} % for divergence
+\newcommand{\curl}[1]{\gv{\nabla} \times #1} % for curl
+\let\baraccent=\= % rename builtin command \= to \baraccent
+\renewcommand{\=}[1]{\stackrel{#1}{=}} % for putting numbers above =
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{dfn}{Definition}
+
+%\usepackage[colorlinks,linkcolor=black,anchorcolor=black,citecolor=blue
+%,CJKbookmarks=True,pdftex]{hyperref}
+%如果文件采用了utf-8编码保存，那么千千万万不要在hyperref包的选项里面写入CJKbookmarks，这会导致乱码。而应该使用unicode选项。
+%一个简单问题：如果采用pdflatex编译，选项中应该写pdftex；而如果采用类似latex->dvi2ps->ps2pdf这样的一条编译链的话就应该使用选项dvipdfm。
+
+\usepackage[colorlinks,linkcolor=black,anchorcolor=black,citecolor=blue
+,unicode=true,pdftex]{hyperref}
+\begin{document}
+\songti
+\titleformat{\chapter}{\centering\myfonta\heiti}{第\,\thechapter\,章}{1em}{}[\vspace{-0.5cm}]
+\titleformat{\section}{\flushleft\myfontb\heiti}{\thesection}{1em}{}
+\titleformat{\subsection}{\flushleft\myfontc\heiti}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\flushleft\myfontc\heiti}{\thesubsection}{1em}{}
+
+\myfontb{
+\tableofcontents}
+
+\input{introduction}
+\input{superconductingqubit}{\tiny }
+\input{automata}
+%\nocite{Bibtexkey}
+% 文中未出现引用标记，但依然需要在参考文献中打印该文献时使用
+\bibliographystyle{abbrv}% or plain
+%plain，按字母的顺序排列，比较次序为作者、年度和标题.
+%unsrt，样式同plain，只是按照引用的先后排序.
+%alpha，用作者名首字母+年份后两位作标号，以字母顺序排序.
+%abbrv，类似plain，将月份全拼改为缩写，更显紧凑.
+%ieeetr，国际电气电子工程师协会期刊样式.
+%acm，美国计算机学会期刊样式.
+%siam，美国工业和应用数学学会期刊样式.
+%apalike，美国心理学学会期刊样式.
+\bibliography{thesis_bibli//thesis_bibli}
+
+
+\end{document}
