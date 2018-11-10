@@ -6,9 +6,14 @@ from scipy import integrate
 from scipy.integrate import quad,dblquad,nquad
 import math
 import csv
+import matplotlib
 import matplotlib as mpl
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
+
+from colour import Color
+
+
 
 def transform_qobj(qobj):
 	new = []
@@ -25,53 +30,284 @@ def qobj_normal(qobj):
 
 
 def matrix_histogram(M, xlabels=None, ylabels=None, title=None, limits=None,
+					 colorbar=True, fig=None, ax=None):
+	"""
+	Draw a histogram for the matrix M, with the given x and y labels and title.
+
+	Parameters
+	----------
+	M : Matrix of Qobj
+		The matrix to visualize
+
+	xlabels : list of strings
+		list of x labels
+
+	ylabels : list of strings
+		list of y labels
+
+	title : string
+		title of the plot (optional)
+
+	limits : list/array with two float numbers
+		The z-axis limits [min, max] (optional)
+
+	ax : a matplotlib axes instance
+		The axes context in which the plot will be drawn.
+
+	Returns
+	-------
+	fig, ax : tuple
+		A tuple of the matplotlib figure and axes instances used to produce
+		the figure.
+
+	Raises
+	------
+	ValueError
+		Input argument is not valid.
+
+	"""
+
+
+	def make_bar(ax, x0=0, y0=0, width=0.5, height=1, cmap="viridis",
+				 norm=matplotlib.colors.Normalize(vmin=0, vmax=1), **kwargs):
+		# Make data
+		u = np.linspace(0, 2 * np.pi, 4 + 1) + np.pi / 4.
+		v_ = np.linspace(np.pi / 4., 3. / 4 * np.pi, 100)
+		v = np.linspace(0, np.pi, len(v_) + 2)
+		v[0] = 0;
+		v[-1] = np.pi;
+		v[1:-1] = v_
+		x = np.outer(np.cos(u), np.sin(v))
+		y = np.outer(np.sin(u), np.sin(v))
+		z = np.outer(np.ones(np.size(u)), np.cos(v))
+
+		xthr = np.sin(np.pi / 4.) ** 2;
+		zthr = np.sin(np.pi / 4.)
+		x[x > xthr] = xthr;
+		x[x < -xthr] = -xthr
+		y[y > xthr] = xthr;
+		y[y < -xthr] = -xthr
+		z[z > zthr] = zthr;
+		z[z < -zthr] = -zthr
+
+		x *= 1. / xthr * width;
+		y *= 1. / xthr * width
+		z += zthr
+		z *= height / (2. * zthr)
+		# translate
+		x += x0;
+		y += y0
+		# plot
+		ax.plot_surface(x, y, z, cmap=cmap, norm=norm, **kwargs)
+
+	def frame(ax,M):
+		M = M * 1.1
+		### Frame
+		n = np.size(M)
+		xpos, ypos = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
+
+		xpos = xpos.T.flatten() - 0.05   # + 0.5 #- 0.5
+		ypos = ypos.T.flatten() - 0.05 # + 0.1
+		zpos = np.zeros(n)  # + 0.1
+		dx = dy = 0.4 * np.ones(n)
+		dz = np.real(M.flatten())
+
+		if limits and type(limits) is list and len(limits) == 2:
+			z_min = limits[0]
+			z_max = limits[1]
+		else:
+			z_min = min(dz)
+			z_max = max(dz)
+			if z_min == z_max:
+				z_min -= 0.1
+				z_max += 0.1
+
+		norm = mpl.colors.Normalize(z_min, z_max)
+		cmap = cm.get_cmap('Spectral')  # Spectral jet 'RdBu'
+		# cmap = cm.get_cmap('GnBu')
+		colors = cmap(norm(dz), alpha=1)
+
+
+		ax.bar3d(xpos, ypos, zpos, dx, dy, dz,alpha=0,  color=colors, edgecolor='grey', linewidth=0.7)
+		ax.set_alpha(0.5)
+		return
+
+	# ax.set_facecolor('white')
+	# ax.set_alpha(0.5)
+	if isinstance(M, Qobj):
+		# extract matrix data from Qobj
+		M = M.full()
+
+	n = np.size(M)
+	if ax is None:
+		fig = plt.figure(figsize = (8,6))
+		# change seeing angle
+		ax = fig.add_subplot(1, 1, 1, projection='3d', azim=-36, elev=36)
+		#ax = Axes3D(fig, azim=-36, elev=36)
+
+
+
+	xpos, ypos = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
+
+	xpos = xpos.T.flatten()   #+ 0.5 #- 0.5
+	ypos = ypos.T.flatten()  #+ 0.1
+	zpos = np.zeros(n) #+ 0.1
+	dx = dy = 0.6 * np.ones(n)
+	dz = np.real(M.flatten())
+
+	if limits and type(limits) is list and len(limits) == 2:
+		z_min = limits[0]
+		z_max = limits[1]
+	else:
+		z_min = min(dz)
+		z_max = max(dz)
+		if z_min == z_max:
+			z_min -= 0.1
+			z_max += 0.1
+
+	norm = mpl.colors.Normalize(z_min, z_max)
+	cmap = cm.get_cmap('Spectral')  # Spectral jet 'RdBu'
+	# cmap = cm.get_cmap('GnBu')
+	colors = cmap(norm(dz),alpha = 0.9)
+	# frame(ax=ax, M=M)
+	ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha = 1,color=colors, edgecolor='black', linewidth=0.6, shade=True)
+
+
+
+	if title and fig:
+		ax.set_title(title)
+
+	# '''Here change the bar location'''
+	# x axis
+	ax.axes.w_xaxis.set_major_locator(plt.IndexLocator(1, 0.3))
+	if xlabels:
+		# ticksx = np.arange(M.shape[0])
+		# plt.xticks(ticksx, xlabels)
+
+
+		ax.set_xticklabels(xlabels)
+	ax.tick_params(axis='x', labelsize=14)#,rotation=45)
+
+	# y axis
+	ax.axes.w_yaxis.set_major_locator(plt.IndexLocator(1, 0.3))
+	if ylabels:
+		# ticksy = np.arange(M.shape[1])
+		# plt.yticks(ticksy, ylabels)
+		ax.set_yticklabels(ylabels)#,rotation=-90)
+	ax.tick_params(axis='y', labelsize=14)
+
+	# z axis
+	ax.axes.w_zaxis.set_major_locator(plt.IndexLocator(0.5, -1))
+	ax.set_zlim3d([min(z_min, 0), z_max])
+
+	#ax.set_title('test')
+
+
+
+	# color axis
+	if colorbar:
+		cax, kw = mpl.colorbar.make_axes(ax, shrink=.75, pad=.1)
+		mpl.colorbar.ColorbarBase(cax, cmap=cmap, norm=norm)
+
+	return fig, ax
+
+
+def matrix_gradient(M, xlabels=None, ylabels=None, title=None, limits=None,
                      colorbar=True, fig=None, ax=None):
-    """
-    Draw a histogram for the matrix M, with the given x and y labels and title.
+    def make_bar(ax, x0=0, y0=0, width=0.5, height=1, cmap="jet",
+                 norm=matplotlib.colors.Normalize(vmin=-1, vmax=1), **kwargs):
+        # Make data
+        u = np.linspace(0, 2 * np.pi, 4 + 1) + np.pi / 4.
+        v_ = np.linspace(np.pi / 4., 3. / 4 * np.pi, 100)
+        v = np.linspace(0, np.pi, len(v_) + 2)
+        v[0] = 0;
+        v[-1] = np.pi;
+        v[1:-1] = v_
+        x = np.outer(np.cos(u), np.sin(v))
+        y = np.outer(np.sin(u), np.sin(v))
+        z = np.outer(np.ones(np.size(u)), np.cos(v))
 
-    Parameters
-    ----------
-    M : Matrix of Qobj
-        The matrix to visualize
+        xthr = np.sin(np.pi / 4.) ** 2;
+        zthr = np.sin(np.pi / 4.)
+        x[x > xthr] = xthr;
+        x[x < -xthr] = -xthr
+        y[y > xthr] = xthr;
+        y[y < -xthr] = -xthr
+        z[z > zthr] = zthr;
+        z[z < -zthr] = -zthr
 
-    xlabels : list of strings
-        list of x labels
+        x *= 1. / xthr * width;
+        y *= 1. / xthr * width
+        z += zthr
+        z *= height / (2. * zthr)
+        # translate
+        x += x0
+        y += y0
+        # plot
+        ax.plot_surface(x, y, z, cmap=cmap, norm=norm, **kwargs)
 
-    ylabels : list of strings
-        list of y labels
+    def frame(ax, M):
+        M = M * 1.1
+        ### Frame
+        n = np.size(M)
+        xpos, ypos = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
 
-    title : string
-        title of the plot (optional)
+        xpos = xpos.T.flatten() - 0.5  # + 0.5 #- 0.5
+        ypos = ypos.T.flatten() - 0.5 # + 0.1
+        zpos = np.zeros(n)  # + 0.1
+        dx = dy = 0.6 * np.ones(n)
+        dz = np.real(M.flatten())
 
-    limits : list/array with two float numbers
-        The z-axis limits [min, max] (optional)
+        if limits and type(limits) is list and len(limits) == 2:
+            z_min = limits[0]
+            z_max = limits[1]
+        else:
+            z_min = min(dz)
+            z_max = max(dz)
+            if z_min == z_max:
+                z_min -= 0.1
+                z_max += 0.1
 
-    ax : a matplotlib axes instance
-        The axes context in which the plot will be drawn.
+        norm = mpl.colors.Normalize(z_min, z_max)
+        cmap = cm.get_cmap('jet')  # Spectral jet 'RdBu'
+        # cmap = cm.get_cmap('GnBu')
+        colors = cmap(norm(dz), alpha=0)
 
-    Returns
-    -------
-    fig, ax : tuple
-        A tuple of the matplotlib figure and axes instances used to produce
-        the figure.
+        ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha=1, color=colors, edgecolor='black', linewidth=0.7)
+        ax.set_alpha(0.5)
+        return
 
-    Raises
-    ------
-    ValueError
-        Input argument is not valid.
+    def make_bars(ax, x, y, height, width= 0.3):
+        widths = np.array(width) * np.ones_like(x)
+        x = np.array(x).flatten()
+        y = np.array(y).flatten()
 
-    """
+        h = np.array(height).flatten()
+        w = np.array(widths).flatten()
+        norm = matplotlib.colors.Normalize(vmin=h.min(), vmax=h.max())
+        for i in range(len(x.flatten())):
+            make_bar(ax, x0=x[i], y0=y[i], width=w[i], height=h[i], norm=norm)
 
+
+    # ax.set_facecolor('white')
+    # ax.set_alpha(0.5)
     if isinstance(M, Qobj):
         # extract matrix data from Qobj
         M = M.full()
 
     n = np.size(M)
-    xpos, ypos = np.meshgrid(range(M.shape[0]), range(M.shape[1]))
-    xpos = xpos.T.flatten() - 0.5
-    ypos = ypos.T.flatten() - 0.5
-    zpos = np.zeros(n)
-    dx = dy = 0.3 * np.ones(n)
+    if ax is None:
+        fig = plt.figure(figsize=(8, 6))
+        # change seeing angle
+        ax = fig.add_subplot(1, 1, 1, projection='3d', azim=-36, elev=36)
+    # ax = Axes3D(fig, azim=-36, elev=36)
+
+    xpos, ypos = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
+
+    xpos = xpos.T.flatten() -0.5# + 0.5 #- 0.5
+    ypos = ypos.T.flatten() -0.5 # + 0.1
+    zpos = np.zeros(n)  # + 0.1
+    dx = dy = 0.6 * np.ones(n)
     dz = np.real(M.flatten())
 
     if limits and type(limits) is list and len(limits) == 2:
@@ -85,46 +321,50 @@ def matrix_histogram(M, xlabels=None, ylabels=None, title=None, limits=None,
             z_max += 0.1
 
     norm = mpl.colors.Normalize(z_min, z_max)
-    cmap = cm.get_cmap('RdBu')  # Spectral jet
+    cmap = cm.get_cmap('jet')  # Spectral jet 'RdBu'
     # cmap = cm.get_cmap('GnBu')
-    colors = cmap(norm(dz))
-
-    if ax is None:
-        fig = plt.figure()
-        ax = Axes3D(fig, azim=-35, elev=35)
-
-    ax.bar3d(xpos, ypos, zpos, dx, dy, dz, color=colors)
+    colors = cmap(norm(dz), alpha=0.9)
+    # frame(ax=ax, M=M)
+    make_bars(ax, x = xpos, y = ypos, height = dz, width=0.3)
 
     if title and fig:
         ax.set_title(title)
 
+    # '''Here change the bar location'''
     # x axis
-    ax.axes.w_xaxis.set_major_locator(plt.IndexLocator(1, -0.5))
+    ax.axes.w_xaxis.set_major_locator(plt.IndexLocator(1, 0.3))
     if xlabels:
+        # ticksx = np.arange(M.shape[0])
+        # plt.xticks(ticksx, xlabels)
+
         ax.set_xticklabels(xlabels)
-    ax.tick_params(axis='x', labelsize=14)
+    ax.tick_params(axis='x', labelsize=14)  # ,rotation=45)
 
     # y axis
-    ax.axes.w_yaxis.set_major_locator(plt.IndexLocator(1, -0.5))
+    ax.axes.w_yaxis.set_major_locator(plt.IndexLocator(1, 0.3))
     if ylabels:
-        ax.set_yticklabels(ylabels)
+        # ticksy = np.arange(M.shape[1])
+        # plt.yticks(ticksy, ylabels)
+        ax.set_yticklabels(ylabels)  # ,rotation=-90)
     ax.tick_params(axis='y', labelsize=14)
 
     # z axis
-    ax.axes.w_zaxis.set_major_locator(plt.IndexLocator(1, 0.5))
+    ax.axes.w_zaxis.set_major_locator(plt.IndexLocator(0.5, -1))
     ax.set_zlim3d([min(z_min, 0), z_max])
+
+    # ax.set_title('test')
 
     # color axis
     if colorbar:
-        cax, kw = mpl.colorbar.make_axes(ax, shrink=.75, pad=.0)
+        cax, kw = mpl.colorbar.make_axes(ax, shrink=.75, pad=.1)
         mpl.colorbar.ColorbarBase(cax, cmap=cmap, norm=norm)
 
     return fig, ax
 
 def matrix_histogram_complex(M, xlabels=None, ylabels=None,
-                             title=None, limits=None, phase_limits=None,
-                             colorbar=True, fig=None, ax=None,
-                             threshold=None):
+							 title=None, limits=None, phase_limits=None,
+							 colorbar=True, fig=None, ax=None,
+							 threshold=None):
 	def complex_phase_cmap():
 		cdict = {'blue': ((0.00, 0.0, 0.0),
 						  (0.25, 0.0, 0.0),
@@ -213,3 +453,22 @@ def matrix_histogram_complex(M, xlabels=None, ylabels=None,
 		cb.set_label('arg')
 
 	return fig, ax
+
+
+test = Qobj([   [0.2,0.3,0,1],
+				[0.8,0,0,0.2],
+				[0.1,0,-0.7,0.5],
+				[0.4,0.1,0.1,0.8],
+			])
+#yyyyy
+# x
+# x
+# x
+matrix_histogram(test,xlabels=[r'$\left|00\right>$',r'$\left|01\right>$',r'$\left|10\right>$',r'$\left|11\right>$'],
+				 ylabels=[r'$\left<00\right|$', r'$\left<01\right|$',r'$\left<10\right|$',r'$\left<11\right|$'])
+
+matrix_gradient(test,xlabels=[r'$\left|00\right>$',r'$\left|01\right>$',r'$\left|10\right>$',r'$\left|11\right>$'],
+				 ylabels=[r'$\left<00\right|$', r'$\left<01\right|$',r'$\left<10\right|$',r'$\left<11\right|$'])
+plt.show()
+
+
