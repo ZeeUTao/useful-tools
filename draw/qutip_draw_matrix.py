@@ -99,15 +99,15 @@ def matrix_histogram(M, xlabels=None, ylabels=None, title=None, limits=None,
         ax.plot_surface(x, y, z, cmap=cmap, norm=norm, **kwargs)
 
     def frame(ax, M):
-        M = M * 1.1
+        M = M * 0.8
         ### Frame
         n = np.size(M)
         xpos, ypos = np.meshgrid(np.arange(M.shape[0]), np.arange(M.shape[1]))
 
-        xpos = xpos.T.flatten() - 0.05  # + 0.5 #- 0.5
-        ypos = ypos.T.flatten() - 0.05  # + 0.1
+        xpos = xpos.T.flatten() -0.05 # + 0.5 #- 0.5
+        ypos = ypos.T.flatten() -0.05 # + 0.1
         zpos = np.zeros(n)  # + 0.1
-        dx = dy = 0.4 * np.ones(n)
+        dx = dy = 0.8  * np.ones(n)
         dz = np.real(M.flatten())
 
         if limits and type(limits) is list and len(limits) == 2:
@@ -121,11 +121,11 @@ def matrix_histogram(M, xlabels=None, ylabels=None, title=None, limits=None,
                 z_max += 0.1
 
         norm = mpl.colors.Normalize(z_min, z_max)
-        cmap = cm.get_cmap('Spectral')  # Spectral jet 'RdBu'
+        cmap = cm.get_cmap('Greys')  # Spectral jet 'RdBu'
         # cmap = cm.get_cmap('GnBu')
-        colors = cmap(norm(dz), alpha=1)
+        colors = cmap(norm(np.ones_like(dz)*-1), alpha=0.5)
 
-        ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha=0, color=colors, edgecolor='grey', linewidth=0.7)
+        ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha=0.1, color=colors,edgecolor='black', linewidth=0.7,shade=True,zorder=1)
         ax.set_alpha(0.5)
         return
 
@@ -164,10 +164,10 @@ def matrix_histogram(M, xlabels=None, ylabels=None, title=None, limits=None,
     norm = mpl.colors.Normalize(-1, 1)
     cmap = cm.get_cmap('RdBu')  # Spectral jet 'RdBu'
     # cmap = cm.get_cmap('GnBu')
-    colors = cmap(norm(dz), alpha=0.9)
-    # frame(ax=ax, M=M)
-    ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha=1, color=colors, edgecolor='black', linewidth=0.3, shade=True)
+    colors = cmap(norm(dz), alpha=1)
 
+    ax.bar3d(xpos, ypos, zpos, dx, dy, dz, alpha=1, color=colors, edgecolor='black', linewidth=0.4, shade=True)
+    #frame(ax=ax, M=M)
     if title and fig:
         ax.set_title(title)
 
@@ -458,11 +458,15 @@ def matrix_histogram_complex(M, xlabels=None, ylabels=None,
     return fig, ax
 
 
-# test0 = Qobj([[0.2, 0.3, 0, 1, 0.3, 0, 1,1],
-#              [0.8, 0, 0, 0.2],
-#              [0.1, 0, -0.7, 0.5],
-#              [0.4, 0.1, 0.1, 0.8],
-#              ])
+test0 = Qobj([[0.2, 0.3, 0, 1, 0.3, 0, 1,0],
+             [0.8, 0, 0, 0.2, 0.3, 0, 0,0],
+              [0.8, 0, 0, 0.2, 0.3, 0, 0, 1],
+             [0.1, 0, -0.7, 0.5, 0.3, 0, 0,0],
+             [0.1, 0, -0.7, 0.5, 0.3, 0, 0,0],
+              [0.1, 0, -0.7, 0.5, 0.3, 0, 0, 0],
+              [0.1, 0, -0.7, 0.5, 0.3, 0, 0, 0],
+             [0.4, 0.1, 0.1, 0.8, 0.3, 0, 1,0]
+             ])
 
 # yyyyy
 # x
@@ -474,11 +478,11 @@ ylabels=[r'$\left|000\right>$', r'$\left|001\right>$', r'$\left|010\right>$', r'
          r'$\left|100\right>$', r'$\left|101\right>$', r'$\left|110\right>$', r'$\left|111\right>$']
 xlabels=[r'$\left<000\right|$', r'$\left<001\right>$', r'$\left<010\right|$', r'$\left<011\right|$',
          r'$\left<100\right|$', r'$\left<101\right>$', r'$\left<110\right|$', r'$\left<111\right|$']
-fig = plt.figure(figsize=(14, 6))
+fig = plt.figure(figsize=(14, 5))
 for idx in range(2):
     test = rand_herm(8)
     ax = fig.add_subplot(1, 2, idx + 1, projection='3d', azim=-36, elev=36)
-    matrix_gradient(test, ylabels=ylabels,xlabels=xlabels,ax=ax)
+    matrix_gradient(test0, ylabels=ylabels,xlabels=xlabels,ax=ax)
 
 fig = plt.figure(figsize=(14, 6))
 for idx in range(2):
