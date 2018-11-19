@@ -1,0 +1,272 @@
+%pdfLatex
+
+\documentclass[10pt,a4paper]{report}
+
+\usepackage{tikz}
+\usepackage{braids}
+\usepackage{xifthen}
+
+\usepackage{lastpage}
+\usepackage[section]{placeins}
+\usepackage[hidelinks,unicode=true]{hyperref}
+\usepackage[capitalise]{cleveref}
+
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[center]{titlesec}
+\usepackage{amsmath} % AMS Math Package
+\usepackage{amsthm} % Theorem Formatting
+\usepackage{amssymb}	% Math symbols such as \mathbb
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{mathrsfs} 
+
+\newcommand{\sxf}[4]{ X_{#1} X_{#2}X_{#3} X_{#4} }
+\newcommand{\szf}[4]{ Z_{#1}Z_{#2}Z_{#3} Z_{#4} }
+\renewcommand{\labelenumi}{(\alph{enumi})} % Use letters for enumerate
+% \DeclareMathOperator{\Sample}{Sample}
+\let\vaccent=\v % rename builtin command \v{} to \vaccent{}
+\renewcommand{\v}[1]{\ensuremath{\mathbf{#1}}} % for vectors
+\newcommand{\gv}[1]{\ensuremath{\mbox{\boldmath$ #1 $}}} 
+% for vectors of Greek letters
+\newcommand{\uv}[1]{\ensuremath{\mathbf{\hat{#1}}}} % for unit vector
+\newcommand{\abs}[1]{\left| #1 \right|} % for absolute value
+\newcommand{\avg}[1]{\left< #1 \right>} % for average
+\let\underdot=\d % rename builtin command \d{} to \underdot{}
+\renewcommand{\d}[2]{\frac{d #1}{d #2}} % for derivatives
+\newcommand{\dd}[2]{\frac{d^2 #1}{d #2^2}} % for double derivatives
+\newcommand{\pd}[2]{\frac{\partial #1}{\partial #2}} 
+% for partial derivatives
+\newcommand{\pdd}[2]{\frac{\partial^2 #1}{\partial #2^2}} 
+% for double partial derivatives
+\newcommand{\pdc}[3]{\left( \frac{\partial #1}{\partial #2}
+	\right)_{#3}} % for thermodynamic partial derivatives
+\newcommand{\ket}[1]{\left| #1 \right>} % for Dirac bras
+\newcommand{\bra}[1]{\left< #1 \right|} % for Dirac kets
+\newcommand{\braket}[2]{\left< #1 \vphantom{#2} \right|
+	\left. #2 \vphantom{#1} \right>} % for Dirac brackets
+\newcommand{\matrixel}[3]{\left< #1 \vphantom{#2#3} \right|
+	#2 \left| #3 \vphantom{#1#2} \right>} % for Dirac matrix elements
+\newcommand{\grad}[1]{\gv{\nabla} #1} % for gradient
+\let\divsymb=\div % rename builtin command \div to \divsymb
+\renewcommand{\div}[1]{\gv{\nabla} \cdot #1} % for divergence
+\newcommand{\curl}[1]{\gv{\nabla} \times #1} % for curl
+\let\baraccent=\= % rename builtin command \= to \baraccent
+\renewcommand{\=}[1]{\stackrel{#1}{=}} % for putting numbers above =
+\newtheorem{prop}{Proposition}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{dfn}{Definition}
+
+
+% BEGIN FUSION STATE DIAGRAMS
+
+\makeatletter
+\newcounter{mycounter}
+\newcommand{\fs}[3][]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.5}
+	\def\offset{0.5}
+	\ifthenelse{\equal{#1}{}}{\def\height{1}}{} % Smaller height if no braiding
+	\setcounter{mycounter}{0}
+	\@for\el:=#2\do{
+		\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			\braid at (\value{mycounter},\height) s_1^{-1};
+			\stepcounter{mycounter}
+		}{
+			\stepcounter{mycounter}
+			\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			}{
+				\draw (\value{mycounter}, \height) to (\value{mycounter}, 0);
+			}
+		}
+		\node at (\value{mycounter}, \height+\offset) {$\el$};
+	}
+	\draw (0, 0) to (\value{mycounter}+1, 0);
+	\setcounter{mycounter}{0}
+	\@for\el:=#3\do{
+		\node at (\value{mycounter}+0.5, -0.6) {$\el$};
+		\stepcounter{mycounter}
+	}
+	\end{tikzpicture}
+}
+\makeatother
+
+\makeatletter
+\newcommand{\fswide}[3][]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.75}
+	\def\offset{0.5}
+	\def\widthfactor{2}
+	\ifthenelse{\equal{#1}{}}{\def\height{1}}{} % Smaller height if no braiding
+	\setcounter{mycounter}{0}
+	\@for\el:=#2\do{
+		\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			\braid[width=\widthfactor cm, height=1.25 cm] at (\widthfactor*\value{mycounter},\height) s_1^{-1};
+			\stepcounter{mycounter}
+		}{
+			\stepcounter{mycounter}
+			\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			}{
+				\draw (\widthfactor*\value{mycounter}, \height) to (\widthfactor*\value{mycounter}, 0);
+			}
+		}
+		\node at (\widthfactor*\value{mycounter}, \height+\offset) {$\el$};
+	}
+	\draw (0, 0) to (\widthfactor*\value{mycounter}+\widthfactor*1, 0);
+	\setcounter{mycounter}{0}
+	\@for\el:=#3\do{
+		\node at (\widthfactor*\value{mycounter} + \widthfactor*0.5, -0.6) {$\el$};
+		\stepcounter{mycounter}
+	}
+	\end{tikzpicture}
+}
+\makeatother
+
+\makeatletter
+\newcommand{\fswideflex}[4][]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.75}
+	\def\offset{0.5}
+	\def\widthfactor{#4}
+	\ifthenelse{\equal{#1}{}}{\def\height{1}}{} % Smaller height if no braiding
+	\setcounter{mycounter}{0}
+	\@for\el:=#2\do{
+		\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			\braid[width=\widthfactor cm, height=1.25 cm] at (\widthfactor*\value{mycounter},\height) s_1^{-1};
+			\stepcounter{mycounter}
+		}{
+			\stepcounter{mycounter}
+			\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			}{
+				\draw (\widthfactor*\value{mycounter}, \height) to (\widthfactor*\value{mycounter}, 0);
+			}
+		}
+		\node at (\widthfactor*\value{mycounter}, \height+\offset) {$\el$};
+	}
+	\draw (0, 0) to (\widthfactor*\value{mycounter}+\widthfactor*1, 0);
+	\setcounter{mycounter}{0}
+	\@for\el:=#3\do{
+		\node at (\widthfactor*\value{mycounter} + \widthfactor*0.5, -0.6) {$\el$};
+		\stepcounter{mycounter}
+	}
+	\end{tikzpicture}
+}
+\makeatother
+
+\makeatletter
+\newcommand{\fswider}[3][]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.75}
+	\def\offset{0.5}
+	\def\widthfactor{3}
+	\ifthenelse{\equal{#1}{}}{\def\height{1}}{} % Smaller height if no braiding
+	\setcounter{mycounter}{0}
+	\@for\el:=#2\do{
+		\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			\braid[width=\widthfactor cm, height=1.25 cm] at (\widthfactor*\value{mycounter},\height) s_1^{-1};
+			\stepcounter{mycounter}
+		}{
+			\stepcounter{mycounter}
+			\ifthenelse{\equal{#1}{\value{mycounter}}}{
+			}{
+				\draw (\widthfactor*\value{mycounter}, \height) to (\widthfactor*\value{mycounter}, 0);
+			}
+		}
+		\node at (\widthfactor*\value{mycounter}, \height+\offset) {$\el$};
+	}
+	\draw (0, 0) to (\widthfactor*\value{mycounter}+\widthfactor*1, 0);
+	\setcounter{mycounter}{0}
+	\@for\el:=#3\do{
+		\node at (\widthfactor*\value{mycounter} + \widthfactor*0.5, -0.6) {$\el$};
+		\stepcounter{mycounter}
+	}
+	\end{tikzpicture}
+}
+\makeatother
+
+\newcommand{\fsfused}[5]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.75}
+	\def\offset{0.5}
+	\node at (1, \height+\offset) {$#2$};
+	\node at (2, \height+\offset) {$#3$};
+	\draw (0.5, 0) to (2.5, 0);
+	\draw (1, \height) to [bend left=-30] (1.5, 1);
+	\draw (2, \height) to [bend left=30] (1.5, 1);
+	\draw (1.5, 1) to (1.5, 0);
+	\node at (0.75, -0.6) {$#1$};
+	\node at (2.25, -0.6) {$#4$};
+	\node at (2, 0.7) {$#5$};
+	\end{tikzpicture}
+}
+
+\newcommand{\fsfusedUp}[9]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\node at (0, 1.5+0.5) {$#1$};
+	\node at (1, 2.5+0.5) {$#2$};
+	\node at (2, 2.5+0.5) {$#3$};
+	\node at (3, 1.5+0.5) {$#4$};
+	\draw (-1, 0) to (4, 0); % horizontal
+	\draw (1, 2.5) to [bend left=-30] (1.5, 1.5);
+	\draw (2, 2.5) to [bend left=30]  (1.5, 1.5);
+	\draw (1.5, 1.5) to (1.5, 0); % vertical under bend
+	\draw (0,   1.5) to (0,   0); % vertical non-bend
+	\draw (3,   1.5) to (3,   0); % vertical non-bend
+	\node at (-0.75, -0.6) {$#5$};
+	\node at (0.75, -0.6) {$#6$};
+	\node at (2, 0.7) {$#7$};
+	\node at (2.25, -0.6) {$#8$};
+	\node at (3.75, -0.6) {$#9$};
+	\end{tikzpicture}
+}
+
+\newcommand{\fsfuseddouble}[9]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{1.75}
+	\def\offset{0.5}
+	\node at (1, \height+\offset) {$#2$};
+	\node at (2, \height+\offset) {$#3$};
+	\node at (3, \height+\offset) {$#6$};
+	\node at (4, \height+\offset) {$#7$};
+	\draw (0.5, 0) to (4.5, 0);
+	\draw (1, \height) to [bend left=-30] (1.5, 1);
+	\draw (2, \height) to [bend left=30]  (1.5, 1);
+	\draw (3, \height) to [bend left=-30] (3.5, 1);
+	\draw (4, \height) to [bend left=30]  (3.5, 1);
+	\draw (1.5, 1) to (1.5, 0);
+	\draw (3.5, 1) to (3.5, 0);
+	\node at (2,     0.5) {$#4$};
+	\node at (0.75, -0.6) {$#1$};
+	\node at (2.5,    -0.6) {$#5$};
+	\node at (4,     0.5) {$#8$};
+	\node at (4.25, -0.6) {$#9$};
+	\end{tikzpicture}
+}
+
+\newcommand{\fsfusedbraided}[5]{
+	\begin{tikzpicture}[scale=0.3,font=\footnotesize,anchor=mid,baseline={([yshift=-.5ex]current bounding box.center)}]
+	\def\height{3}
+	\def\offset{0.5}
+	\node at (1, \height+\offset) {$#2$};
+	\node at (2, \height+\offset) {$#3$};
+	\braid at (1, \height) s_1^{-1};
+	\draw (0.5, 0) to (2.5, 0);
+	\draw (1, 1.5) to [bend left=-30] (1.5, 1);
+	\draw (2, 1.5) to [bend left=30] (1.5, 1);
+	\draw (1.5, 1) to (1.5, 0);
+	\node at (0.5, -0.6) {$#1$};
+	\node at (2.5, -0.6) {$#4$};
+	\node at (2, 0.7) {$#5$};
+	\end{tikzpicture}
+}
+
+% END FUSION STATE DIAGRAM
+
+
