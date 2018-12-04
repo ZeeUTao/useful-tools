@@ -1,0 +1,12 @@
+\usepackage{qcircuit} 
+
+\begin{figure}
+	\centering
+		\[\Qcircuit @C=1em @R=.7em {
+      & \ctrl{2} & \targ & \gate{U} & \qw \\
+      & \qw & \ctrl{-1} & \qw & \qw \\
+      & \targ & \ctrl{-1} & \ctrl{-2} & \qw \\
+      & \qw & \ctrl{-1} & \qw & \qw
+      }\]
+	\caption{quantum circuits for prepare the initial state in $Z_4$} \label{Z4_circuit}
+\end{figure}
