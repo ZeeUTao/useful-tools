@@ -4,6 +4,7 @@ import qutip.tensor as t
 import matplotlib.pyplot as plt
 # from picture import *
 
+'''Some handy config usually used'''
 
 x, y, z, i = sigmax(),sigmay(),sigmaz(),qeye(2)
 
