@@ -17,5 +17,8 @@ def qpt(gate = sigmax()):
 	fig = qpt_plot_combined(chi, op_label)
 	return Qobj(chi)
 	
-def draw_mat(mat):
-	matrix_histogram(Qobj(mat))
+def draw_mat(mat,imag = False, complex = False):
+	mat = (Qobj(mat))
+	matrix_histogram(np.real(mat.full()))
+	if imag: matrix_histogram(np.imag(mat.full()))
+	if complex: matrix_histogram_complex(Qobj(mat))
