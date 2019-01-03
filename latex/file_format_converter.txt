@@ -1,0 +1,4 @@
+http://www.tlhiv.org/rast2vec/  % convert png
+
+
+https://cloudconvert.com/svg-to-eps   % almost convert anything
