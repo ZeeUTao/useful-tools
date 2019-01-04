@@ -105,3 +105,70 @@ fig.tight_layout()
 
 plt.show()
 
+
+
+
+
+
+
+
+
+
+
+
+
+%------------------------------PS
+
+
+def draw_bias2d(ax=None,fig=None,font_xylabel = 12):
+    from matplotlib.colors import BoundaryNorm
+    from matplotlib.ticker import MaxNLocator
+    import numpy as np
+    if fig == None and ax == None:
+        fig = plt.figure(figsize=(8,6))
+    if ax == None:
+        ax = fig.add_subplot(1, 1, 1)
+
+    ifile = open(power2d, "r")
+    # reader is a list [[row1],[row2],...]
+    reader = csv.reader(ifile)
+
+    freq_step = 26
+
+    freq,power,amp = [],[],[]
+    x,y,z = [],[],[]
+    for idx, row in enumerate(reader):
+        x.append(float(row[0]))
+        y.append(float(row[1]))
+        z.append(float(row[3]))
+        if (idx+1) % freq_step == 0 and idx > 0:
+            if (idx+1) == freq_step:
+                freq, power, amp = np.array([x]),np.array([y]),np.array([z])
+            else:
+                freq = np.concatenate((freq, np.array([x])), axis=0)
+                power = np.concatenate((power, np.array([y])), axis=0)
+                amp = np.concatenate((amp, np.array([z])), axis=0)
+            x, y, z = [], [], []
+
+
+    levels = MaxNLocator(nbins=1000).tick_values(amp.min(), amp.max())
+
+    # pick the desired colormap, sensible levels, and define a normalization
+    # instance which takes data values and translates those into levels.
+    cmap = plt.get_cmap('RdBu')
+    norm = BoundaryNorm(levels, ncolors=cmap.N, clip=True)
+
+    im = ax.pcolormesh(freq,power, amp, cmap=cmap, norm=norm)
+    #im = ax.contourf(freq, power, amp, cmap=cmap, norm=norm)
+
+    cbar = fig.colorbar(im, ax=ax)
+    bar_scale = 1000
+    cbar.set_ticks(np.linspace(amp.min()//bar_scale *bar_scale + bar_scale, amp.max()//bar_scale*bar_scale, 5))
+    #ax.set_title('pcolormesh with levels')
+    ax.set_xlabel("Frequency(GHz)", fontsize=font_xylabel)
+    ax.set_ylabel(r"$\left|S_{21}\right|$(a.u.)", fontsize=font_xylabel)
+    ax.set_xticks(np.linspace(freq.min(), freq.max(), 5))
+    ax.set_yticks(np.linspace(power.min(), power.max(), 6))
+    ax.legend()
+    fig.tight_layout()
+    return
