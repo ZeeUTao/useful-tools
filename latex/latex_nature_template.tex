@@ -1,0 +1,251 @@
+%% Template for a preprint Letter or Article for submission
+%% to the journal Nature.
+%% Written by Peter Czoschke, 26 February 2004
+%%
+
+
+\documentclass[]{nature}
+\makeatletter\if@twocolumn\PassOptionsToPackage{switch}{lineno}\else\fi\makeatother
+\usepackage{rotating}
+\bibliographystyle{naturemag}
+
+\usepackage[utf8x]{inputenc}
+
+\makeatletter
+\renewenvironment{figure}
+{\@float{figure}}
+{\end@float}
+\renewenvironment{figure*}
+{\@dblfloat{figure}}
+{\end@dblfloat}
+\renewenvironment{table}
+{\@float{table}}
+{\end@float}
+\renewenvironment{table*}
+{\@dblfloat{table}}
+{\end@dblfloat}
+
+\makeatother
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Following additional macros are required to function some 
+% functions which are not available in the class used.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{url,multirow,morefloats,floatflt,cancel,tfrupee}
+\makeatletter
+
+
+\AtBeginDocument{\@ifpackageloaded{textcomp}{}{\usepackage{textcomp}}}
+\makeatother
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{pifont}
+\usepackage[nointegrals]{wasysym}
+\urlstyle{rm}
+\makeatletter
+
+%%%For Table column width calculation.
+\def\mcWidth#1{\csname TY@F#1\endcsname+\tabcolsep}
+
+%%Hacking center and right align for table
+\def\cAlignHack{\rightskip\@flushglue\leftskip\@flushglue\parindent\z@\parfillskip\z@skip}
+\def\rAlignHack{\rightskip\z@skip\leftskip\@flushglue \parindent\z@\parfillskip\z@skip}
+
+
+%\if@twocolumn\usepackage{dblfloatfix}\fi
+\usepackage{ifxetex}
+\ifxetex\else\if@twocolumn\usepackage{dblfloatfix}\fi\fi
+
+\AtBeginDocument{
+	\expandafter\ifx\csname eqalign\endcsname\relax
+	\def\eqalign#1{\null\vcenter{\def\\{\cr}\openup\jot\m@th
+			\ialign{\strut$\displaystyle{##}$\hfil&$\displaystyle{{}##}$\hfil
+				\crcr#1\crcr}}\,}
+	\fi
+}
+
+%For fixing hardfail when unicode letters appear inside table with endfloat
+\AtBeginDocument{%
+	\@ifpackageloaded{endfloat}%
+	{\renewcommand\efloat@iwrite[1]{\immediate\expandafter\protected@write\csname efloat@post#1\endcsname{}}}{\newif\ifefloat@tables}%
+}%
+
+\def\BreakURLText#1{\@tfor\brk@tempa:=#1\do{\brk@tempa\hskip0pt}}
+\let\lt=<
+\let\gt=>
+\def\processVert{\ifmmode|\else\textbar\fi}
+\let\processvert\processVert
+
+\@ifundefined{subparagraph}{
+	\def\subparagraph{\@startsection{paragraph}{5}{2\parindent}{0ex plus 0.1ex minus 0.1ex}%
+		{0ex}{\normalfont\small\itshape}}%
+}{}
+
+
+% These are now gobbled, so won't appear in the PDF.
+\newcommand\role[1]{\unskip}
+\newcommand\aucollab[1]{\unskip}
+
+\@ifundefined{tsGraphicsScaleX}{\gdef\tsGraphicsScaleX{1}}{}
+\@ifundefined{tsGraphicsScaleY}{\gdef\tsGraphicsScaleY{.9}}{}
+% To automatically resize figures to fit inside the text area
+\def\checkGraphicsWidth{\ifdim\Gin@nat@width>\linewidth
+	\tsGraphicsScaleX\linewidth\else\Gin@nat@width\fi}
+
+\def\checkGraphicsHeight{\ifdim\Gin@nat@height>.9\textheight
+	\tsGraphicsScaleY\textheight\else\Gin@nat@height\fi}
+
+\def\fixFloatSize#1{}%\@ifundefined{processdelayedfloats}{\setbox0=\hbox{\includegraphics{#1}}\ifnum\wd0<\columnwidth\relax\renewenvironment{figure*}{\begin{figure}}{\end{figure}}\fi}{}}
+\let\ts@includegraphics\includegraphics
+
+\def\inlinegraphic[#1]#2{{\edef\@tempa{#1}\edef\baseline@shift{\ifx\@tempa\@empty0\else#1\fi}\edef\tempZ{\the\numexpr(\numexpr(\baseline@shift*\f@size/100))}\protect\raisebox{\tempZ pt}{\ts@includegraphics{#2}}}}
+
+%\renewcommand{\includegraphics}[1]{\ts@includegraphics[width=\checkGraphicsWidth]{#1}}
+\AtBeginDocument{\def\includegraphics{\@ifnextchar[{\ts@includegraphics}{\ts@includegraphics[width=\checkGraphicsWidth,height=\checkGraphicsHeight,keepaspectratio]}}}
+
+\DeclareMathAlphabet{\mathpzc}{OT1}{pzc}{m}{it}
+
+\def\URL#1#2{\@ifundefined{href}{#2}{\href{#1}{#2}}}
+
+%---------------------------------------------------------------------------------------------------
+
+\usepackage{lipsum}
+
+\usepackage{graphicx}% Include figure files
+\usepackage{dcolumn}% Align table columns on decimal point
+\usepackage{bm}% bold math
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+%\usepackage[center]{titlesec}
+\usepackage{amsmath} % AMS Math Package
+\usepackage{amsthm} % Theorem Formatting
+\usepackage{amssymb}	% Math symbols such as \mathbb
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{mathrsfs} 
+%\usepackage{qcircuit} 
+\usepackage{color,booktabs}
+%\usepackage{arydshln} % hdashline
+
+\newcommand{\ket}[1]{\left| #1 \right>} % for Dirac bras
+\newcommand{\bra}[1]{\left< #1 \right|} % for Dirac kets
+
+
+
+
+%% make sure you have the nature.cls and naturemag.bst files where
+%% LaTeX can find them
+
+\bibliographystyle{naturemag}
+
+\title{Notes on Quantum Computation}
+
+%% Notice placement of commas and superscripts and use of &
+%% in the author list
+
+\author{XX}
+
+
+\begin{document}
+
+\maketitle
+
+\begin{affiliations}
+ \item XX
+\end{affiliations}
+
+\begin{abstract}
+This report is based on H. Wang's talk on the Condensed Matter Physics Forum. Quantum computer as a new type computation based on quantum mechanics attracts attention and interest of many institutes and companies because its powerful operational capability. In this work, we will choose superconducting quantum circuits(SQC) system whose most important part is Josephson junction which must be worked at extreme low temperature ( $\sim$ 20 milli Kelvin) as the physical realization. Experimental researches on SQC have made great progress, but it is far from a universal fault-tolerant quantum computer. The maintenance of coherence is the basis for the advantages of quantum computing, so one of the most important reasons is the decoherence of the quantum states. This paper will introduce what the quantum computation is and what the superconducting-based qubits' decoherence is.
+\end{abstract}
+
+\input{intro.tex}
+\input{decoh.tex}
+
+\begin{figure}
+\centering
+\includegraphics[width=0.47\textwidth]{fig/10-qubit}
+\caption{ The 10-qubit superconducting sample\cite{Song2017}} \label{10_qubit}
+\end{figure}
+
+%\begin{figure}
+%\caption{The 10-qubit superconducting sample\cite{Song2017}}
+%\end{figure}
+
+%\section*{Another Section}
+%
+%Sections can only be used in Articles.  Contributions should be
+%organized in the sequence: title, text, methods, references,
+%Supplementary Information line (if any), acknowledgements,
+%interest declaration, corresponding author line, tables, figure
+%legends.
+%
+%Spelling must be British English (Oxford English Dictionary)
+%
+%In addition, a cover letter needs to be written with the
+%following:
+%\begin{enumerate}
+% \item A 100 word or less summary indicating on scientific grounds
+%why the paper should be considered for a wide-ranging journal like
+%\textsl{Nature} instead of a more narrowly focussed journal.
+% \item A 100 word or less summary aimed at a non-scientific audience,
+%written at the level of a national newspaper.  It may be used for
+%\textsl{Nature}'s press release or other general publicity.
+% \item The cover letter should state clearly what is included as the
+%submission, including number of figures, supporting manuscripts
+%and any Supplementary Information (specifying number of items and
+%format).
+% \item The cover letter should also state the number of
+%words of text in the paper; the number of figures and parts of
+%figures (for example, 4 figures, comprising 16 separate panels in
+%total); a rough estimate of the desired final size of figures in
+%terms of number of pages; and a full current postal address,
+%telephone and fax numbers, and current e-mail address.
+%\end{enumerate}
+%
+%See \textsl{Nature}'s website
+%(\texttt{http://www.nature.com/nature/submit/gta/index.html}) for
+%complete submission guidelines.
+%
+%\begin{methods}
+%Put methods in here.  If you are going to subsection it, use
+%\verb|\subsection| commands.  Methods section should be less than
+%800 words and if it is less than 200 words, it can be incorporated
+%into the main text.
+%
+%\subsection{Method subsection.}
+%
+%Here is a description of a specific method used.  Note that the
+%subsection heading ends with a full stop (period) and that the
+%command is \verb|\subsection{}| not \verb|\subsection*{}|.
+%
+%\end{methods}
+
+%% Put the bibliography here, most people will use BiBTeX in
+%% which case the environment below should be replaced with
+%% the \bibliography{bibli//bibli} command.
+\bibliography{bibli//bibli}
+
+
+
+%% Here is the endmatter stuff: Supplementary Info, etc.
+%% Use \item's to separate, default label is "Acknowledgements"
+
+%\begin{addendum}
+% \item Put acknowledgements here.
+% \item[Competing Interests] The authors declare that they have no
+%competing financial interests.
+% \item[Correspondence] Correspondence and requests for materials
+%should be addressed to A.B.C.~(email: myaddress@nowhere.edu).
+%\end{addendum}
+
+%%
+%% TABLES
+%%
+%% If there are any tables, put them here.
+%%
+
+\end{document}
