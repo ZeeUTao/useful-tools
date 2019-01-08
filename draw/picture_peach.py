@@ -1,3 +1,7 @@
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
+import matplotlib.pyplot as plt
+
 def set_figorder(ax,order = 'a'):
     ax.set_title(order, x=0.1, y=0.9,fontsize = 14)
     return	
