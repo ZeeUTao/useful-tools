@@ -1,7 +1,7 @@
 def set_figorder(ax,order = 'a'):
     ax.set_title(order, x=0.1, y=0.9,fontsize = 14)
     return	
-    #print(get_eigen(error_rate = 0))
+
 
 def draw_2d(kx,ky,kz,fig=None,ax=None,fig_label=None,xlabel=None,ylabel=None):
 	if fig == None:
