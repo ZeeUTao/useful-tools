@@ -35,7 +35,7 @@ def draw_surface(kx,ky,kz,fig=None,ax=None,fig_label=None,xlabel=None,ylabel=Non
 	from matplotlib import cm
 	if fig == None:
 		fig = plt.figure(figsize=(8,6))
-		ax = fig.add_subplot(1, 1, 1)
+		ax = fig.add_subplot(1, 1, 1, projection='3d')
 	if ax == None:
 		ax = plt.subplot(111, projection='3d')
 	
