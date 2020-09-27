@@ -1,0 +1,3 @@
+download .exe from 
+http://slproweb.com/products/Win32OpenSSL.html
+and install it, to fix the ImportError of OpenSSL in anaconda python 3.7.x
