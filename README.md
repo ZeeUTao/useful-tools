@@ -1,3 +1,2 @@
 # useful-tools
-## some useful code like drawing 2dcolor surface by python and tex template
-## resume.zip is a latex resume model
+some useful code like live drawing and batch file
