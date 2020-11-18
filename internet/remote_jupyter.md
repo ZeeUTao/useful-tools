@@ -22,3 +22,8 @@ c.NotebookApp.password = 'sha1:128c0c7eac38:49aa851556830d3d2cbcf70d31e139822c9f
 c.NotebookApp.port = 2333
 ```
 
+open 
+```
+jupyter-lab --port 2333 --notebook-dir="D:\User\XXX\Exp"
+```
+
