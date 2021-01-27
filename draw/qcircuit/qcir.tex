@@ -1,0 +1,119 @@
+\documentclass[
+reprint,amsmath,amssymb,aps,prl,
+]{revtex4-1}
+
+\usepackage{graphicx}% Include figure files
+
+
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\usepackage{amsmath} % AMS Math Package
+\usepackage{amsthm} % Theorem Formatting
+\usepackage{amssymb}	% Math symbols such as \mathbb
+
+\usepackage{textcomp}
+\usepackage{mathrsfs} 
+\usepackage{qcircuit} 
+\usepackage{color,booktabs}
+
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+
+\newcommand{\ket}[1]{\left| #1 \right>} % for Dirac bras
+\newcommand{\bra}[1]{\left< #1 \right|} % for Dirac kets
+\begin{document}
+
+\title{cir}% Force line breaks with \\
+\author{Ziyu Tao}
+\date{\today}% It is always \today, today,
+%  but any date may be explicitly specified
+
+
+
+\begin{abstract}
+	aa
+\end{abstract}
+
+\maketitle
+	
+$\frac{\ket{0000}+\ket{1111}}{\sqrt{2}}$
+
+
+$\frac{\ket{0000000}+\ket{1111111}}{\sqrt{2}}$
+
+\clearpage
+
+
+\begin{figure*}[H]
+	\centering
+	\[\Qcircuit @C=1.5em @R=1em{
+&\lstick{\ket{0}} & \gate{Y/2} & \ctrl{1} 
+& \qw & \qw & \meter
+\\
+&\lstick{\ket{0}} & \qw & \targ & \ctrl{1} 
+& \qw & \meter
+\\
+&\lstick{\ket{0}} & \qw & \qw & \targ & \ctrl{1} 
+& \meter 
+\\
+&\lstick{\ket{0}} & \qw & \qw & \qw  & \targ & \meter 
+%\gategroup{1}{2}{5}{8}{2.5em}{--}
+%\gategroup{2}{9}{5}{12}{0.8em}{^\}}
+%-- . _\} ^\} \{ \} _) ^) ( )
+	} \]
+
+	\caption{GHZ 4} \label{ghz_circuit}
+\end{figure*}
+
+
+\begin{figure*}[H]
+	\centering
+\[
+\Qcircuit @C=1.5em @R=1em{
+	& \qw & \ctrl{1} 
+	& \qw 
+	\\
+	& \qw & \targ & \qw}
+=
+\Qcircuit @C=1.5em @R=1em{
+	& \qw & \ctrl{1} 
+	& \qw & \qw
+	\\
+	& \gate{ R_y\left(\frac{\pi}{2}\right)} & \gate{Z} & \gate{ R_y\left(-\frac{\pi}{2}\right)}
+	& \qw }
+\]
+	\caption{cz cnot}
+\end{figure*}
+
+
+\begin{figure*}[H]
+	\centering
+	\[\Qcircuit @C=0.75em @R=1em{
+		&\lstick{\ket{0}} & \gate{Y/2} & \ctrl{1} 
+		& \qw & \qw & \qw & \qw & \qw & \meter
+		\\
+		&\lstick{\ket{0}} & \qw & \targ & \ctrl{1} 
+		& \qw & \qw & \qw & \qw & \meter
+		\\
+		&\lstick{\ket{0}} & \qw & \qw & \targ & \ctrl{1} 
+		& \qw & \qw & \qw & \meter 
+		\\
+		&\lstick{\ket{0}} & \qw & \qw & \qw  & \targ & \ctrl{1} 
+		& \qw & \qw & \meter 
+		\\
+		&\lstick{\ket{0}} & \qw & \qw & \qw  & \qw & \targ & \ctrl{1}  
+		& \qw & \meter 
+		\\
+		&\lstick{\ket{0}} & \qw & \qw & \qw  & \qw & \qw & \targ 
+		& \ctrl{1} & \meter 
+		\\
+		&\lstick{\ket{0}} & \qw & \qw & \qw  & \qw & \qw & \qw 
+		& \targ & \meter 
+	} \]
+	
+	\caption{GHZ 7}
+\end{figure*}
+
+
+\end{document}
