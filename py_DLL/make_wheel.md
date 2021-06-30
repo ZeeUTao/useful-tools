@@ -32,7 +32,7 @@ then run
 python setup.py bdist_wheel
 ```
 
-and you get `xxx.whl` in `.\dist`.
+and you get `xxx-py2.py3-none-any.whl.whl` in `.\dist`.
 
 
 
